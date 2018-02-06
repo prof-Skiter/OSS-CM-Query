@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy import create_engine
 import pandas as pd
-import re
-import datetime
-import os
-import sys
+import datetime, re, os, sys
 
-
-def querry(df):
+def query(df):
     gp = df.groupby('Site')
 
     while True:
@@ -30,22 +26,19 @@ def querry(df):
 print('Pull data from OSS? ', end='')
 a = input()
 if a == 'n':
-    curdir = os.listdir()
+    curdir = os.listdir('output')
     date = datetime.datetime.strptime('2018-01-01', "%Y-%m-%d")
     for f in curdir:
         if 'CFG_QUERRY' in f:
-            print('f = ', f)
-            print('search: ', re.search("^\d+-\d+-\d+", f).group(0))
             tmp = datetime.datetime.strptime(re.search("^\d+-\d+-\d+", f).group(0), "%Y-%m-%d")
-            print(tmp)
             if tmp > date:
                 date = tmp
                 file = f
             
     print('Open file: ', file)
-    df = pd.read_csv(file)
+    df = pd.read_csv('output/' + file)
     print(df)
-    querry(df)
+    query(df)
     sys.exit()
 
 
@@ -181,4 +174,4 @@ if a == 'y':
     result.to_csv(str(now).split()[0] + "_" + "CFG_QUERRY.csv")
     print('Saved')
 
-querry(result)
+query(result)
